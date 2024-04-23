@@ -1,0 +1,9 @@
+https://expo.dev/accounts/thata_schmidt/projects
+
+npm install --global expo
+npx create-expo-app <appAulas>
+npm install expo-notifications
+npm install --global eas-cli
+eas init --id <id-do-projeto>
+
+import * as Notification from 'expo-notifications';
