@@ -7,3 +7,29 @@ npm install --global eas-cli
 eas init --id <id-do-projeto>
 
 import * as Notification from 'expo-notifications';
+
+
+criar um formulario stack para exibir as informações
+
+se nao clicar, salvar localmente, pode ser no array. notificações ordenadas do mais novo ao mais velho
+
+e ao clicar a notificação, carregar a stack
+
+ao clicar no botao carregar uma tela com todas as notificações que foram recebidas
+
+id data titla body 
+
+-------------------------
+
+npx expo install @react-navigation/native    
+npx expo install react-native-screens react-native-safe-area-context 
+npx expo install @react-navigation/native-stack 
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+
+
+https://expo.dev/accounts/thata_schmidt/projects/notify
+https://docs.expo.dev/versions/latest/sdk/location/

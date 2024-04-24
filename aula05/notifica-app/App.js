@@ -1,21 +1,37 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import * as Notification from 'expo-notifications';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 Notification.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,  /* aparecer a notificação */
     shouldPlaySound: true,  /* notificação com som */
     shouldSetBadge: true,   /* numero de notificações no app */
+    // ios: { para usuarios de Iphone
+    //   allowAlert: true,
+    //   allowBadge: true, 
+    //   allowSound: true,
+    // }
   }),
 });
 
 export default function App() {
   const [expoToken, setExpoToken] = useState('');  /* vai armazenar o token que vai ser retornado pelo servidor do expo */
 
+  //Referencia para quando a notificação chegar
+  const notificationReceiveRef = useRef();
+
+  //Referencia para quando a notificação for clicada
+  const notificationResponseRef = useRef();
+
   useEffect(() => {
     registerForPushNotificationAsync().then(token => setExpoToken(token));
+
+    notificationReceiveRef.current = Notification.addNotificationReceivedListener(notification => { console.log('notificação recebida: ', notification) });
+
+    notificationResponseRef.current = Notification.addNotificationReceivedListener(notification => { console.log('notificação clicada: ', notification) });
+
   }, []);
 
   async function handleNotificationLocal() {
@@ -53,7 +69,7 @@ async function schedulePushNotification() {
 
       //title:"Notificação local",
       //body: 'Este é um teste de notificação local com temporizador.'
-    },
+    }, 
     trigger: null,
     //trigger: { seconds: 5 },
   })
@@ -73,6 +89,7 @@ async function registerForPushNotificationAsync() {
   }
 
   token = (await Notification.getExpoPushTokenAsync({ projectId: 'cfa97459-0e47-4af3-98dd-fa984a4faad8' })).data;
+  console.log(token);  // obter o ExponentPushToken[3NRa5qCQOnRdBlGL7Ul9N4]
   return token;
 };
 
@@ -83,4 +100,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
 });
