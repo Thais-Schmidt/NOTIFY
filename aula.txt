@@ -21,14 +21,13 @@ id data titla body
 
 -------------------------
 
-npx expo install @react-navigation/native    
+npx expo install @react-navigation/native     - ou npm i
 npx expo install react-native-screens react-native-safe-area-context 
-npx expo install @react-navigation/native-stack 
+npx expo install @react-navigation/native-stack  - ou npm i
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
 
 
 https://expo.dev/accounts/thata_schmidt/projects/notify

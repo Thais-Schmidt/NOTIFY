@@ -2,9 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import * as Notification from 'expo-notifications';
 import { useEffect, useState, useRef } from 'react';
+import { useNavigation } from '@react-navigation/native';
+
 
 Notification.setNotificationHandler({
+
   handleNotification: async () => ({
+
     shouldShowAlert: true,  /* aparecer a notificação */
     shouldPlaySound: true,  /* notificação com som */
     shouldSetBadge: true,   /* numero de notificações no app */
@@ -16,9 +20,18 @@ Notification.setNotificationHandler({
   }),
 });
 
+export default function Home() {
 
-export default function App() {
+  const navigation = useNavigation();
+
+  const notificacoes = () => {
+    navigation.navigate('Notificacoes', { itens: allNotifications });
+  };
+
   const [expoToken, setExpoToken] = useState('');  /* vai armazenar o token que vai ser retornado pelo servidor do expo */
+  const [notificationReceived, setNotificationReceived] = useState(null);
+  const [notificationResponse, setNotificationResponse] = useState(null);
+  const [allNotifications, setAllNotifications] = useState({ data: [] });
 
   //Referencia para quando a notificação chegar
   const notificationReceiveRef = useRef();
@@ -35,13 +48,29 @@ export default function App() {
 
   }, []);
 
-  // useEffect(() => {
-  //   if (notificationReceive != null) {
-  //     const { date, request: { content, identifier, trigger } } = notificationReceiveRef;
+  //recebe os dados e armazena num array
 
-  //     dados = { date: date, bodyMessage: content.body, titleMessage: content.identifier }
-  //   }
-  // };
+  useEffect(() => {
+    if (notificationReceived != null) {
+
+      const { date, request: { content, identifier, trigger } } = notificationReceived;
+
+      console.log(date, content.body, content.title)
+
+      dados = { date: date, bodyMessage: content.body, titleMessage: content.title };
+
+      setAllNotifications(prevState => ({  //
+        ...prevState,
+        data: [...prevState.data, dados]
+      }));
+    }
+  }, [notificationReceived]);
+
+  useEffect(() => {
+    if (allNotifications != null) {
+      console.log(`All:`, allNotifications);
+    }
+  }, [allNotifications])
 
   async function handleNotificationLocal() {
     schedulePushNotification();
@@ -51,14 +80,14 @@ export default function App() {
 
     <View style={styles.container}>
 
-      <Text>Trabalhando com notificações no Expo!</Text>
+      <Button
+        title="Enviar notificações local"
+        onPress={async () => { await handleNotificationLocal() }}
+      />
 
       <Button
-
-        title="Enviar notificações local"
-
-        onPress={async () => { await handleNotificationLocal() }}
-
+        onPress={notificacoes}
+        title="Exibir notificações"
       />
 
       <Text>{expoToken}</Text>
@@ -85,13 +114,18 @@ async function schedulePushNotification() {
 };
 
 async function registerForPushNotificationAsync() {
+
   let token;
+
   const { status: existingStatus } = await Notification.getPermissionsAsync();
+
   let finalStatus = existingStatus;
+
   if (existingStatus !== 'granted') {  /* granted serve para fazer a verificação */
     const { status } = await Notification.requestPermissionsAsync();
     finalStatus = status;
   }
+
   if (finalStatus !== 'granted') {
     alert("Voce nao tem permissao para receber notificações!");
     return;
@@ -99,6 +133,7 @@ async function registerForPushNotificationAsync() {
 
   token = (await Notification.getExpoPushTokenAsync({ projectId: 'cfa97459-0e47-4af3-98dd-fa984a4faad8' })).data;
   console.log(token);  // obter o ExponentPushToken[3NRa5qCQOnRdBlGL7Ul9N4]
+
   return token;
 };
 
