@@ -1,61 +1,88 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Pressable, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Pressable, ScrollView, Dimensions } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import {  useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useState } from 'react';
-import * as Notification from 'expo-notifications';
+// import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// const Stack = createNativeStackNavigator();
+const windowWidth = Dimensions.get('window').width;
 
-const windowWidth = Dimensions.get('window').width; //obter a largura da janela do dispositivo
-
-Notification.setNotificationHandler({
-
-    handleNotification: async () => ({
-
-        shouldShowAlert: true,  /* aparecer a notificação */
-        shouldPlaySound: true,  /* notificação com som */
-        shouldSetBadge: true,   /* numero de notificações no app */
-    }),
-
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
 });
 
 export default function Notificacoes() {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const [allNotifications, setAllNotifications] = useState(route.params?.itens);
 
-    const navigation = useNavigation();
-    const route = useRoute();
-    const [allNotifications, setAllNotifications] = useState(route.params?.itens);
+  // console.log('Vamos imprimir: ',allNotifications);
 
-    const notificacoesDetalhes = () => {
-        navigation.navigate('DetalhesNotificacao');
-    };
+  const handlePress = (dados) => {
+    console.log('View pressionada!', dados);
+    navigation.navigate('DetalhesNotificacao', {
+      data: dados,
+    });
+  };
 
-    const handlePress = (dados) => {
-        console.log("view pressionada", dados);
-        navigation.navigate('notificacoesDetalhes', { data: dados, });
-    }
+  return (
+    <View style={styles.container}>
+      <Text>Clique em uma notificação para visualizar o conteúdo:</Text>
+      {/* A propriedade key é usada pelo React para identificar de forma única cada elemento na lista, o que é crucial para que o React possa otimizar a renderização e o desempenho. */}
 
-    return (
-        <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.containerScroll}>
+        {allNotifications.data.map(notif => (
 
-            <Text style={styles.title}>Notificações</Text>
+          <Pressable key={notif.date} onPress={() => handlePress(notif)} style={{ width: '95%' }}>
+            <View style={[styles.containerFilmes]}>
+              <View style={styles.clienteItem}>
+            
+                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{notif.titleMessage}</Text>
 
-            <Button
-                onPress={notificacoesDetalhes}
-                title="Exibir detalhes"
-            />
+              </View>
+            </View>
+          </Pressable>
 
-        </View>
-    );
+        ))}
+      </ScrollView>
+      <StatusBar style="auto" />
+    </View>
+  );
 }
 
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 10
-    },
-    title: {
-        fontSize: 21,
-        fontWeight: 'bold'
-    }
+  container: {
+    flex: 1,
+    // backgroundColor: '#fff',
+    alignItems: 'center',
+    // justifyContent: 'center',
+    gap: 10,
+    paddingTop: 20
+  },
+  containerFilmes: {
+    width: '100%',
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    padding: 15,
+    gap: 3,
+    // borderRadius: 2,
+    elevation: 5,
+    marginTop: 5
+  },
+  containerScroll: {
+    flexGrow: 1,
+    // flex:1,
+    width: windowWidth,
+    // backgroundColor: '#fff',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 20,
+    gap: 5,
+
+},
 });

@@ -25,7 +25,7 @@ export default function App() {
           options={{
             title: 'Notificações',
             headerStyle: {
-              backgroundColor: '#f9c4c0',
+              backgroundColor: '#ffbb30',
             },
           }}
         />
@@ -37,7 +37,7 @@ export default function App() {
           options={{
             title: 'Notificações',
             headerStyle: {
-              backgroundColor: '#f9c4c0',
+              backgroundColor: '#ffbb30',
             },
           }}
         />

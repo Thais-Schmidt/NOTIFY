@@ -42,9 +42,15 @@ export default function Home() {
   useEffect(() => {
     registerForPushNotificationAsync().then(token => setExpoToken(token));
 
-    notificationReceiveRef.current = Notification.addNotificationReceivedListener(notification => { console.log('notificação recebida: ', notification) });
+    notificationReceiveRef.current = Notification.addNotificationReceivedListener(notification => {
+      //console.log('notificação recebida: ', notification)
+      setNotificationReceived(notification);
+    });
 
-    notificationResponseRef.current = Notification.addNotificationReceivedListener(notification => { console.log('notificação clicada: ', notification) });
+    notificationResponseRef.current = Notification.addNotificationReceivedListener(notification => {
+      //console.log('notificação clicada: ', notification)
+      setNotificationResponse();
+    });
 
   }, []);
 
@@ -53,11 +59,11 @@ export default function Home() {
   useEffect(() => {
     if (notificationReceived != null) {
 
-      const { date, request: { content, identifier, trigger } } = notificationReceived;
+      const { data, request: { content, identifier, trigger } } = notificationReceived;
 
-      console.log(date, content.body, content.title)
+      //console.log(date, content.body, content.title)
 
-      dados = { date: date, bodyMessage: content.body, titleMessage: content.title };
+      dados = { date: data, bodyMessage: content.body, titleMessage: content.title };
 
       setAllNotifications(prevState => ({  //
         ...prevState,
@@ -110,6 +116,7 @@ async function schedulePushNotification() {
     },
     trigger: null,
     //trigger: { seconds: 5 },
+
   })
 };
 
@@ -140,7 +147,7 @@ async function registerForPushNotificationAsync() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9c4c0',
+    backgroundColor: '#ffbb30',
     alignItems: 'center',
     justifyContent: 'center',
   },
